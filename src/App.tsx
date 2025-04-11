@@ -42,6 +42,8 @@ import {
   Scatter, ScatterChart
 } from 'recharts';
 import { format, subDays, addDays, startOfMonth, endOfMonth } from 'date-fns';
+import HeatMap from 'react-heatmap-grid';
+import { ValueType } from 'antd/es/table/interface';
 
 // Error Boundary Component
 class ErrorBoundaryComponent extends React.Component<
@@ -168,7 +170,8 @@ const generateSyntheticData = () => {
     const hours = Array.from({ length: 24 }, (_, i) => i);
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     
-    return days.flatMap(day => 
+    // Generate data with realistic patterns
+    const data = days.map(day => 
       hours.map(hour => {
         // Business hours have more activity
         let baseValue = 0;
@@ -180,14 +183,15 @@ const generateSyntheticData = () => {
           baseValue = Math.random() * 15;
         }
         
-        return {
-          day,
-          hour: `${hour}:00`,
-          value: Math.round(baseValue),
-          queries: Math.round(baseValue / 5)
-        };
+        return Math.round(baseValue);
       })
     );
+    
+    return {
+      data,
+      xLabels: hours.map(h => `${h}:00`),
+      yLabels: days
+    };
   };
   
   const queryHeatmapData = generateHeatmapData();
@@ -760,6 +764,13 @@ function App() {
     }
   };
   
+  const cellRender = (value: number | string) => {
+    if (typeof value === 'number' && !isNaN(value)) {
+      return value.toFixed(1);
+    }
+    return String(value);
+  };
+  
   return (
     <ErrorBoundaryComponent>
       <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
@@ -1178,49 +1189,22 @@ function App() {
                     <div className="bg-white rounded-lg shadow p-4 md:p-6">
                       <h3 className="font-semibold mb-4">Query Execution Time Heatmap</h3>
                       <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <ScatterChart
-                            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-                          >
-                            <CartesianGrid opacity={0.15} />
-                            <XAxis 
-                              type="category"
-                              dataKey="hour"
-                              name="Hour"
-                              tick={{ fontSize: 10 }}
-                              tickFormatter={(value) => value.split(':')[0]}
-                            />
-                            <YAxis 
-                              type="category"
-                              dataKey="day"
-                              name="Day"
-                              tick={{ fontSize: 12 }}
-                            />
-                            <Tooltip 
-                              cursor={{ strokeDasharray: '3 3' }}
-                              formatter={(value, name, props) => {
-                                if (name === 'value') {
-                                  return [`${value} seconds avg.`, 'Execution Time'];
-                                }
-                                return [`${value} queries`, 'Query Count'];
-                              }}
-                            />
-                            <Scatter 
-                              name="value"
-                              data={syntheticData.queryHeatmapData}
-                              fill="#8884d8"
-                              shape="circle"
-                            >
-                              {syntheticData.queryHeatmapData.map((entry, index) => (
-                                <Cell 
-                                  key={`cell-${index}`}
-                                  fill={entry.value > 60 ? '#f87171' : entry.value > 30 ? '#facc15' : '#4ade80'}
-                                  opacity={0.7 + (entry.value / 100) * 0.3}
-                                />
-                              ))}
-                            </Scatter>
-                          </ScatterChart>
-                        </ResponsiveContainer>
+                        <HeatMap
+                          xLabels={syntheticData.queryHeatmapData.xLabels}
+                          yLabels={syntheticData.queryHeatmapData.yLabels}
+                          data={syntheticData.queryHeatmapData.data}
+                          xLabelWidth={60}
+                          yLabelWidth={40}
+                          height={200}
+                          cellStyle={(background: string, value: number, min: number, max: number, data: number[][], x: number, y: number) => ({
+                            background: value > 60 ? '#f87171' : value > 30 ? '#facc15' : '#4ade80',
+                            opacity: 0.7 + (value / 100) * 0.3,
+                            fontSize: '11px',
+                            color: '#444'
+                          })}
+                          cellRender={cellRender}
+                          title={(value: number, unit: string, data: number[][]) => `${value} seconds average execution time`}
+                        />
                       </div>
                     </div>
                   </div>
