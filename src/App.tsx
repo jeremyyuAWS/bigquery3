@@ -1217,14 +1217,16 @@ function App() {
                             data={syntheticData.queryHeatmapData.data}
                             xLabelWidth={40}
                             yLabelWidth={40}
-                            height={220}
+                            height={180}
                             cellStyle={(background, value, min, max, data, x, y) => ({
                               background: value > 60 ? '#f87171' : value > 30 ? '#facc15' : '#4ade80',
                               opacity: 0.7 + (value / 100) * 0.3,
                               fontSize: '11px',
                               color: '#444',
-                              padding: '4px',
-                              textAlign: 'center'
+                              padding: '2px',
+                              textAlign: 'center',
+                              height: '24px',
+                              lineHeight: '20px'
                             })}
                             cellRender={cellRender}
                             title={(value, unit, data) => `${value} seconds average execution time`}
