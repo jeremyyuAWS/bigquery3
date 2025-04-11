@@ -32,6 +32,7 @@ import {
   Smartphone,
   Layers
 } from 'lucide-react';
+import { Google } from 'lucide-react';
 import { 
   AreaChart, Area, 
   LineChart, Line, 
@@ -767,8 +768,8 @@ function App() {
         <div className="md:hidden bg-indigo-700 text-white p-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
-              <BarChart3 className="h-6 w-6" />
-              <h1 className="text-lg font-bold">DataGov Agent</h1>
+              <Google className="h-6 w-6" />
+              <h1 className="text-lg font-bold">BQ Query Optimizer</h1>
             </div>
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -841,8 +842,8 @@ function App() {
         {/* Sidebar (desktop) */}
         <aside className="hidden md:block w-64 bg-indigo-700 text-white">
           <div className="p-4 flex items-center space-x-2">
-            <BarChart3 className="h-8 w-8" />
-            <h1 className="text-xl font-bold">DataGov Agent</h1>
+            <Google className="h-8 w-8" />
+            <h1 className="text-xl font-bold">BQ Query Optimizer</h1>
           </div>
           
           <nav className="mt-8">
