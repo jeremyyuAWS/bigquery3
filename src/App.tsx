@@ -45,6 +45,27 @@ import { format, subDays, addDays, startOfMonth, endOfMonth } from 'date-fns';
 import HeatMap from 'react-heatmap-grid';
 import { ValueType } from 'antd/es/table/interface';
 
+// Add this after the other imports
+const BigQueryLogo = () => (
+  <svg
+    width="32"
+    height="32"
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="flex-shrink-0"
+  >
+    <path
+      d="M16 2L4 9V23L16 30L28 23V9L16 2Z"
+      fill="#4285F4"
+    />
+    <path
+      d="M16 12L10 15.5V22.5L16 26L22 22.5V15.5L16 12Z"
+      fill="white"
+    />
+  </svg>
+);
+
 // Error Boundary Component
 class ErrorBoundaryComponent extends React.Component<
   { children: React.ReactNode, fallback?: React.ReactNode },
@@ -778,7 +799,7 @@ function App() {
         <div className="md:hidden bg-indigo-700 text-white p-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
-              <Database className="h-6 w-6" />
+              <BigQueryLogo />
               <h1 className="text-lg font-bold">BQ Query Optimizer</h1>
             </div>
             <button 
@@ -852,7 +873,7 @@ function App() {
         {/* Sidebar (desktop) */}
         <aside className="hidden md:block w-64 bg-indigo-700 text-white">
           <div className="p-4 flex items-center space-x-2">
-            <Database className="h-8 w-8" />
+            <BigQueryLogo />
             <h1 className="text-xl font-bold">BQ Query Optimizer</h1>
           </div>
           
@@ -1188,21 +1209,21 @@ function App() {
                     
                     <div className="bg-white rounded-lg shadow p-4 md:p-6">
                       <h3 className="font-semibold mb-4">Query Execution Time Heatmap</h3>
-                      <div className="overflow-x-auto">
-                        <div style={{ width: '100%', minWidth: '800px' }}>
+                      <div className="h-64 overflow-x-auto">
+                        <div style={{ width: '100%', minWidth: '800px', height: '100%' }}>
                           <HeatMap
                             xLabels={syntheticData.queryHeatmapData.xLabels}
                             yLabels={syntheticData.queryHeatmapData.yLabels}
                             data={syntheticData.queryHeatmapData.data}
                             xLabelWidth={40}
                             yLabelWidth={40}
-                            height={280}
+                            height={220}
                             cellStyle={(background, value, min, max, data, x, y) => ({
                               background: value > 60 ? '#f87171' : value > 30 ? '#facc15' : '#4ade80',
                               opacity: 0.7 + (value / 100) * 0.3,
                               fontSize: '11px',
                               color: '#444',
-                              padding: '8px',
+                              padding: '4px',
                               textAlign: 'center'
                             })}
                             cellRender={cellRender}
