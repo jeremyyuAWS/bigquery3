@@ -42,6 +42,7 @@ import {
   Scatter, ScatterChart
 } from 'recharts';
 import { format, subDays, addDays, startOfMonth, endOfMonth } from 'date-fns';
+import HeatMap from 'react-heatmap-grid';
 
 // Error Boundary Component
 class ErrorBoundaryComponent extends React.Component<
@@ -598,6 +599,49 @@ const formatMoney = (value: number) => {
 const COLORS = ['#4f46e5', '#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6'];
 const ROI_COLORS = ['#4ade80', '#facc15', '#f87171'];
 
+interface HeatmapDataPoint {
+  day: string;
+  hour: string;
+  value: number;
+  queries: number;
+}
+
+const QueryHeatmap = ({ data }: { data: HeatmapDataPoint[] }) => {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`);
+  
+  // Transform data into 2D array for heatmap
+  const heatmapData = days.map(day => {
+    return hours.map(hour => {
+      const entry = data.find(d => d.day === day && d.hour === hour);
+      return entry ? entry.value : 0;
+    });
+  });
+
+  const maxValue = Math.max(...heatmapData.flat());
+
+  return (
+    <div className="bg-white rounded-lg shadow p-4">
+      <h3 className="text-lg font-semibold mb-4">Query Activity Heatmap</h3>
+      <div className="h-[400px]">
+        <HeatMap
+          xLabels={hours}
+          yLabels={days}
+          data={heatmapData}
+          xLabelWidth={60}
+          yLabelWidth={40}
+          cellStyle={(_background: string, value: number, _min: number, _max: number, _data: number[][], _x: number, _y: number) => ({
+            background: `rgb(66, 133, 244, ${value / maxValue})`,
+            fontSize: "11px",
+            color: value > maxValue / 2 ? "#fff" : "#000"
+          })}
+          cellRender={(value: number) => value ? `${value}%` : ''}
+        />
+      </div>
+    </div>
+  );
+};
+
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [chatInput, setChatInput] = useState("");
@@ -1127,7 +1171,12 @@ function App() {
                     </div>
                   </div>
                   
-                  {/* Dashboard Charts Section */}
+                  {/* Query Activity Heatmap */}
+                  <div className="mb-6">
+                    <QueryHeatmap data={syntheticData.queryHeatmapData} />
+                  </div>
+                  
+                  {/* Charts Grid */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-6 mb-6">
                     <div className="bg-white rounded-lg shadow p-4 md:p-6">
                       <h3 className="font-semibold mb-4">Daily Spend by Project</h3>
