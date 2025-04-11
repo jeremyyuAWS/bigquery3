@@ -1188,23 +1188,27 @@ function App() {
                     
                     <div className="bg-white rounded-lg shadow p-4 md:p-6">
                       <h3 className="font-semibold mb-4">Query Execution Time Heatmap</h3>
-                      <div className="h-64">
-                        <HeatMap
-                          xLabels={syntheticData.queryHeatmapData.xLabels}
-                          yLabels={syntheticData.queryHeatmapData.yLabels}
-                          data={syntheticData.queryHeatmapData.data}
-                          xLabelWidth={60}
-                          yLabelWidth={40}
-                          height={200}
-                          cellStyle={(background: string, value: number, min: number, max: number, data: number[][], x: number, y: number) => ({
-                            background: value > 60 ? '#f87171' : value > 30 ? '#facc15' : '#4ade80',
-                            opacity: 0.7 + (value / 100) * 0.3,
-                            fontSize: '11px',
-                            color: '#444'
-                          })}
-                          cellRender={cellRender}
-                          title={(value: number, unit: string, data: number[][]) => `${value} seconds average execution time`}
-                        />
+                      <div className="overflow-x-auto">
+                        <div style={{ width: '100%', minWidth: '800px' }}>
+                          <HeatMap
+                            xLabels={syntheticData.queryHeatmapData.xLabels}
+                            yLabels={syntheticData.queryHeatmapData.yLabels}
+                            data={syntheticData.queryHeatmapData.data}
+                            xLabelWidth={40}
+                            yLabelWidth={40}
+                            height={280}
+                            cellStyle={(background, value, min, max, data, x, y) => ({
+                              background: value > 60 ? '#f87171' : value > 30 ? '#facc15' : '#4ade80',
+                              opacity: 0.7 + (value / 100) * 0.3,
+                              fontSize: '11px',
+                              color: '#444',
+                              padding: '8px',
+                              textAlign: 'center'
+                            })}
+                            cellRender={cellRender}
+                            title={(value, unit, data) => `${value} seconds average execution time`}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
